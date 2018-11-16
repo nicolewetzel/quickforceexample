@@ -139,7 +139,7 @@ public class Application extends Controller {
             }
         }
 
-        CompletionStage<List<Account>> getArticles(AuthInfo authInfo) {
+        CompletionStage<List<Knowledge__kav>> getArticles(AuthInfo authInfo) {
             CompletionStage<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v34.0/query/")
                     .addHeader("Authorization", "Bearer " + authInfo.accessToken)
                     .addQueryParameter("q", "SELECT Id, KnowledgeArticleId, Title, Summary FROM Knowledge__kav")
@@ -148,12 +148,12 @@ public class Application extends Controller {
             return responsePromise.thenCompose(response -> {
                 final JsonNode jsonNode = response.asJson();
                 if (jsonNode.has("error")) {
-                    CompletableFuture<List<Account>> completableFuture = new CompletableFuture<>();
+                    CompletableFuture<List<Knowledge__kav>> completableFuture = new CompletableFuture<>();
                     completableFuture.completeExceptionally(new AuthException(jsonNode.get("error").textValue()));
                     return completableFuture;
                 } else {
-                    QueryResultAccount queryResultAccount = Json.fromJson(jsonNode, QueryResultAccount.class);
-                    return CompletableFuture.completedFuture(queryResultAccount.records);
+                    QueryResultKnowledge__kav queryResultKnowledge__kav = Json.fromJson(jsonNode, QueryResultKnowledge__kav.class);
+                    return CompletableFuture.completedFuture(queryResultKnowledge__kav.records);
                 }
             });
         }
