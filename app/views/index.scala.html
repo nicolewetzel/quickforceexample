@@ -1,4 +1,4 @@
-@(articles: List[Application.Force.Knowledge__kav])
+@(articles: List[Application.Force.Articles])
 
 @main {
 
@@ -11,11 +11,11 @@
             <th>Summary</th>
            
         </tr>
-        @articles.map { account =>
+        @articles.map { Knowledge__kav =>
             <tr>
                 <td>@articles.Id</td>
-                <td>@account.Title</td>
-                <td>@account.Summary</td>
+                <td>@articles.Title</td>
+                <td>@articles.Summary</td>
             </tr>
         }
     </table>
