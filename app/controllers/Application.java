@@ -47,8 +47,8 @@ public class Application extends Controller {
                 return CompletableFuture.completedFuture(redirect(url));
             } else {
                 return force.getToken(code, oauthCallbackUrl(request())).thenCompose(authInfo ->
-                        force.getAccounts(authInfo).thenApply(accounts ->
-                                ok(index.render(accounts))
+                        force.getArticles(authInfo).thenApply(articles ->
+                                ok(index.render(articles))
                         )
                 ).exceptionally(error -> {
                     if (error.getCause() instanceof Force.AuthException)
@@ -111,17 +111,17 @@ public class Application extends Controller {
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class Account {
+        public static class Articles {
             public String Id;
-            public String Name;
-            public String Type;
+            public String Title;
+            public String Summary;
             public String Industry;
-            public String Rating;
+      
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class QueryResultAccount {
-            public List<Account> records;
+        public static class QueryResultArticle {
+            public List<Article> records;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -139,7 +139,7 @@ public class Application extends Controller {
             }
         }
 
-        CompletionStage<List<Account>> getAccounts(AuthInfo authInfo) {
+        CompletionStage<List<Account>> getArticles(AuthInfo authInfo) {
             CompletionStage<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v34.0/query/")
                     .addHeader("Authorization", "Bearer " + authInfo.accessToken)
                     .addQueryParameter("q", "SELECT Id, KnowledgeArticleId, Title, Summary FROM Knowledge__kav")
