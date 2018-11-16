@@ -115,7 +115,6 @@ public class Application extends Controller {
             public String Id;
             public String Title;
             public String Summary;
-            public String Industry;
       
         }
 
