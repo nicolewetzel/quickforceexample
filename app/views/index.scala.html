@@ -1,24 +1,21 @@
-@(accounts: List[Application.Force.Account])
+@(articles: List[Application.Force.Knowledge__kav])
 
 @main {
 
-    <h2>Salesforce Accounts</h2>
+    <h2>Salesforce Knowledge Articles</h2>
 
     <table class="table">
         <tr>
             <th>Id</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Industry</th>
-            <th>Rating</th>
+            <th>Title</th>
+            <th>Summary</th>
+           
         </tr>
-        @accounts.map { account =>
+        @articles.map { account =>
             <tr>
-                <td>@account.Id</td>
-                <td>@account.Name</td>
-                <td>@account.Type</td>
-                <td>@account.Industry</td>
-                <td>@account.Rating</td>
+                <td>@articles.Id</td>
+                <td>@account.Title</td>
+                <td>@account.Summary</td>
             </tr>
         }
     </table>
