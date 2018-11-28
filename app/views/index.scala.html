@@ -1,4 +1,4 @@
-@(articles: List[Application.Force.Knowledge__kav])
+@(KnowledgeArticleVersion: List[Application.Force.KnowledgeArticleVersion])
 
 @main {
 
@@ -6,18 +6,20 @@
 
     <table class="table">
         <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Summary</th>
+            <th>articleNumber</th>
+            <th>title</th>
+
            
         </tr>
-        @articles.map { Knowledge__kav =>
+        @KnowledgeArticleVersion.map { KnowledgeArticleVersion =>
             <tr>
-                <td>@articles.Id</td>
-                <td>@articles.Title</td>
-                <td>@articles.Summary</td>
+               
+                <td>@KnowledgeArticleVersion.articleNumber</td>
+                <td>@KnowledgeArticleVersion.title</td>
+
             </tr>
         }
     </table>
 
 }
+

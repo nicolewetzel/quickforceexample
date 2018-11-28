@@ -47,15 +47,17 @@ public class Application extends Controller {
                 return CompletableFuture.completedFuture(redirect(url));
             } else {
                 return force.getToken(code, oauthCallbackUrl(request())).thenCompose(authInfo ->
-                        force.getArticles(authInfo).thenApply(articles ->
-                                ok(index.render(articles))
+                        force.getArticles(authInfo).thenApply(Knowledge__kav ->
+                                ok(index.render(Knowledge__kav))
                         )
                 ).exceptionally(error -> {
                     if (error.getCause() instanceof Force.AuthException)
                         return redirect(routes.Application.index(null));
                     else
-                        return internalServerError(error.getMessage());
+                        return internalServerError(" completion stage: " +error.getMessage());
+        
                 });
+                
             }
         } else {
             return CompletableFuture.completedFuture(redirect(routes.Application.setup()));
@@ -111,16 +113,32 @@ public class Application extends Controller {
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class Articles {
-            public String Id;
-            public String Title;
-            public String Summary;
-      
+        public static class KnowledgeArticleVersion {
+            public String articleNumber;
+          //  public String categoryGroups;
+           // public String downVoteCount;
+           // public String summary;
+            public String title;
+          //  public String upVoteCount;
+           // public String url;
+           /// public String viewCount;
+            //public String viewScore;
+
+
+
+            public String getArticleNumber() {
+                return articleNumber;
+            }
+        
+            public void setArticleNumbe(String articleNumber) {
+                this.articleNumber = articleNumber;
+            }
         }
+        
 
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class QueryResultArticle {
-            public List<Article> records;
+            public List<KnowledgeArticleVersion> articles;
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -138,24 +156,39 @@ public class Application extends Controller {
             }
         }
 
-        CompletionStage<List<Knowledge__kav>> getArticles(AuthInfo authInfo) {
-            CompletionStage<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v34.0/query/")
+        CompletionStage<List<KnowledgeArticleVersion>> getArticles(AuthInfo authInfo) {
+            CompletionStage<WSResponse> responsePromise = ws.url(authInfo.instanceUrl + "/services/data/v38.0/support/knowledgeArticles")
                     .addHeader("Authorization", "Bearer " + authInfo.accessToken)
-                    .addQueryParameter("q", "SELECT Id, KnowledgeArticleId, Title, Summary FROM Knowledge__kav")
+                    .addHeader("Accept-Language", "en-US")
+                   // .addQueryParameter("q", "SELECT title, summary FROM KnowledgeArticleVersion ")
                     .get();
+                    System.out.println("queryran" + responsePromise); 
+                    
 
             return responsePromise.thenCompose(response -> {
                 final JsonNode jsonNode = response.asJson();
+                //System.out.println("JSON RESPONSE" + response.asJson()); 
+                System.out.println("JSON NODE" + jsonNode);
                 if (jsonNode.has("error")) {
-                    CompletableFuture<List<Knowledge__kav>> completableFuture = new CompletableFuture<>();
+                    CompletableFuture<List<KnowledgeArticleVersion>> completableFuture = new CompletableFuture<>();
                     completableFuture.completeExceptionally(new AuthException(jsonNode.get("error").textValue()));
-                    return completableFuture;
+                    return completableFuture; 
                 } else {
-                    QueryResultKnowledge__kav queryResultKnowledge__kav = Json.fromJson(jsonNode, QueryResultKnowledge__kav.class);
-                    return CompletableFuture.completedFuture(queryResultKnowledge__kav.records);
+                   
+                    QueryResultArticle QueryResultArticle = Json.fromJson(jsonNode, QueryResultArticle.class);
+                    System.out.println("QueryResultArticle.class " + QueryResultArticle.class); 
+             
+                    System.out.println("QueryResultArticle.record NEW TEST " + CompletableFuture.completedFuture(QueryResultArticle.articles));
+                    System.out.println("QueryResultArticle.record NEW TEST " + QueryResultArticle.articles);
+                    return CompletableFuture.completedFuture(QueryResultArticle.articles);
+                
                 }
-            });
+               
+            }
+            );
         }
     }
 
 }
+
+
